@@ -67,7 +67,7 @@ bool canCapture(int x, int y) {
 }
 
 // Handle movement and capture logic for both regular pieces and kings (with multiple jumps)
-JNIEXPORT jboolean JNICALL Java_Main_movePiece(JNIEnv *env, jclass obj, jint startX, jint startY, jint endX, jint endY) {
+JNIEXPORT jboolean JNICALL Java_Main_movePiece(JNIEnv, jclass, jint startX, jint startY, jint endX, jint endY) {
     if (!isWithinBounds(startX, startY) || !isWithinBounds(endX, endY) || board[endX][endY] != 0) {
         return JNI_FALSE;  // Invalid move
     }
@@ -133,7 +133,7 @@ JNIEXPORT jboolean JNICALL Java_Main_movePiece(JNIEnv *env, jclass obj, jint sta
 }
 
 // JNI method to return the current board state to Java
-JNIEXPORT jobjectArray JNICALL Java_Main_getBoardState(JNIEnv *env, jclass obj) {
+JNIEXPORT jobjectArray JNICALL Java_Main_getBoardState(JNIEnv *env, jclass) {
     auto boardState = env->NewObjectArray(8, env->FindClass("[I"), nullptr);  // Create 8x8 Java int array
 
     for (auto i = 0; i < 8; ++i) {
