@@ -1,0 +1,3 @@
+C:/Users/mazha/CLionProject/Project/gameLogic/cmake-build-debug/CMakeFiles/gameLogic.dir
+C:/Users/mazha/CLionProject/Project/gameLogic/cmake-build-debug/CMakeFiles/edit_cache.dir
+C:/Users/mazha/CLionProject/Project/gameLogic/cmake-build-debug/CMakeFiles/rebuild_cache.dir
