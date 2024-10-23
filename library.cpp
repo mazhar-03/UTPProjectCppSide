@@ -56,7 +56,7 @@ bool canCapture(int x, int y) {
 }
 
 // Handle movement and capture logic for both normal and king pieces
-JNIEXPORT jboolean JNICALL Java_Main_movePiece(JNIEnv *env, jclass obj, jint startX, jint startY, jint endX, jint endY) {
+JNIEXPORT jboolean JNICALL Java_main_Main_movePiece(JNIEnv *env, jclass obj, jint startX, jint startY, jint endX, jint endY) {
     // Prevent other pieces from moving during a multi-jump turn
     if (jumpingPieceX != -1 && (startX != jumpingPieceX || startY != jumpingPieceY)) {
         return JNI_FALSE;  // Only the currently jumping piece can move
@@ -89,11 +89,16 @@ JNIEXPORT jboolean JNICALL Java_Main_movePiece(JNIEnv *env, jclass obj, jint sta
         int midY = (startY + endY) / 2;
         int midPiece = board[midX][midY];
 
-        if ((piece == 1 || piece == 2) && midPiece < 0) {  // Player 1 capturing
+        // Normal pieces should only capture forward
+        if (piece == 1 && endX > startX && midPiece < 0) {  // Player 1 capturing
             board[midX][midY] = 0;
             std::swap(board[startX][startY], board[endX][endY]);
             promoteToKing(endX, endY);
-        } else if ((piece == -1 || piece == -2) && midPiece > 0) {  // Player 2 capturing
+        } else if (piece == -1 && endX < startX && midPiece > 0) {  // Player 2 capturing
+            board[midX][midY] = 0;
+            std::swap(board[startX][startY], board[endX][endY]);
+            promoteToKing(endX, endY);
+        } else if (abs(piece) == 2 && ((piece > 0 && midPiece < 0) || (piece < 0 && midPiece > 0))) {  // Kings capturing in all directions
             board[midX][midY] = 0;
             std::swap(board[startX][startY], board[endX][endY]);
             promoteToKing(endX, endY);
@@ -117,7 +122,7 @@ JNIEXPORT jboolean JNICALL Java_Main_movePiece(JNIEnv *env, jclass obj, jint sta
 }
 
 // JNI method to return the current board state to Java
-JNIEXPORT jobjectArray JNICALL Java_Main_getBoardState(JNIEnv *env, jclass obj) {
+JNIEXPORT jobjectArray JNICALL Java_main_Main_getBoardState(JNIEnv *env, jclass obj) {
     jobjectArray boardState = env->NewObjectArray(8, env->FindClass("[I"), nullptr);  // Create 8x8 array
 
     for (int i = 0; i < 8; ++i) {
