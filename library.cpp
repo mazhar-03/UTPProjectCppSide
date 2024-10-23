@@ -121,6 +121,7 @@ JNIEXPORT jboolean JNICALL Java_main_Main_movePiece(JNIEnv *env, jclass obj, jin
     return JNI_FALSE;  // Invalid move
 }
 
+
 // JNI method to return the current board state to Java
 JNIEXPORT jobjectArray JNICALL Java_main_Main_getBoardState(JNIEnv *env, jclass obj) {
     jobjectArray boardState = env->NewObjectArray(8, env->FindClass("[I"), nullptr);  // Create 8x8 array
@@ -133,4 +134,80 @@ JNIEXPORT jobjectArray JNICALL Java_main_Main_getBoardState(JNIEnv *env, jclass 
     }
 
     return boardState;
+}
+
+int checkEndgame() {
+    bool player1HasPieces = false;
+    bool player2HasPieces = false;
+    bool player1CanMoveOrCapture = false;
+    bool player2CanMoveOrCapture = false;
+
+    // Helper function to check if a move is a valid capture
+    auto canCapture = [](int piece, int x, int y) -> bool {
+        if (piece == 1 || piece == 2) {  // Player 1 or King (Player 1)
+            return (isWithinBounds(x + 2, y + 2) && board[x + 1][y + 1] < 0 && board[x + 2][y + 2] == 0) ||
+                   (isWithinBounds(x + 2, y - 2) && board[x + 1][y - 1] < 0 && board[x + 2][y - 2] == 0);
+        } else if (piece == -1 || piece == -2) {  // Player 2 or King (Player 2)
+            return (isWithinBounds(x - 2, y + 2) && board[x - 1][y + 1] > 0 && board[x - 2][y + 2] == 0) ||
+                   (isWithinBounds(x - 2, y - 2) && board[x - 1][y - 1] > 0 && board[x - 2][y - 2] == 0);
+        }
+        return false;
+    };
+
+    // Iterate over the board to check for remaining pieces and available moves for both players
+    for (int i = 0; i < 8; ++i) {
+        for (int j = 0; j < 8; ++j) {
+            int piece = board[i][j];
+
+            if (piece > 0) {  // Player 1's pieces
+                player1HasPieces = true;
+
+                // Check for valid moves or captures for Player 1
+                if ((i + 1 < 8 && j + 1 < 8 && board[i + 1][j + 1] == 0) ||  // Forward right
+                    (i + 1 < 8 && j - 1 >= 0 && board[i + 1][j - 1] == 0) ||  // Forward left
+                    (piece == 2 && i - 1 >= 0 && j + 1 < 8 && board[i - 1][j + 1] == 0) ||  // King backward right
+                    (piece == 2 && i - 1 >= 0 && j - 1 >= 0 && board[i - 1][j - 1] == 0) ||  // King backward left
+                    canCapture(piece, i, j)) {  // Check if piece can capture
+                    player1CanMoveOrCapture = true;
+                }
+            } else if (piece < 0) {  // Player 2's pieces
+                player2HasPieces = true;
+
+                // Check for valid moves or captures for Player 2
+                if ((i - 1 >= 0 && j + 1 < 8 && board[i - 1][j + 1] == 0) ||  // Forward right
+                    (i - 1 >= 0 && j - 1 >= 0 && board[i - 1][j - 1] == 0) ||  // Forward left
+                    (piece == -2 && i + 1 < 8 && j + 1 < 8 && board[i + 1][j + 1] == 0) ||  // King backward right
+                    (piece == -2 && i + 1 < 8 && j - 1 >= 0 && board[i + 1][j - 1] == 0) ||  // King backward left
+                    canCapture(piece, i, j)) {  // Check if piece can capture
+                    player2CanMoveOrCapture = true;
+                }
+            }
+        }
+    }
+
+    // Determine the game outcome
+    if (!player1HasPieces || !player1CanMoveOrCapture) {
+        if (player2HasPieces && player2CanMoveOrCapture) {
+            return -1;  // Player 2 wins
+        }
+    }
+
+    if (!player2HasPieces || !player2CanMoveOrCapture) {
+        if (player1HasPieces && player1CanMoveOrCapture) {
+            return 1;  // Player 1 wins
+        }
+    }
+
+    // If neither player can move or capture, it's a draw
+    if (!player1CanMoveOrCapture && !player2CanMoveOrCapture) {
+        return 2;  // Draw
+    }
+
+    return 0;  // Game is still ongoing
+}
+
+
+// JNI method to return the endgame status to Java
+JNIEXPORT jint JNICALL Java_main_Main_checkEndgame(JNIEnv *env, jclass obj) {
+    return checkEndgame();  // Return the result of the endgame check
 }
