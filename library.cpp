@@ -34,12 +34,14 @@ void promoteToKing(int x, int y) {
 bool canCapture(int x, int y) {
     int piece = board[x][y];
 
-    if (piece == 1) {  // Player 1 normal piece (forward captures only)
+    // Player 1 normal piece (forward captures only)
+    if (piece == 1) {
         if (isWithinBounds(x + 2, y + 2) && board[x + 1][y + 1] < 0 && board[x + 2][y + 2] == 0) return true;
         if (isWithinBounds(x + 2, y - 2) && board[x + 1][y - 1] < 0 && board[x + 2][y - 2] == 0) return true;
     }
 
-    if (piece == -1) {  // Player 2 normal piece (forward captures only)
+    // Player 2 normal piece (forward captures only)
+    if (piece == -1) {
         if (isWithinBounds(x - 2, y + 2) && board[x - 1][y + 1] > 0 && board[x - 2][y + 2] == 0) return true;
         if (isWithinBounds(x - 2, y - 2) && board[x - 1][y - 1] > 0 && board[x - 2][y - 2] == 0) return true;
     }
@@ -74,7 +76,7 @@ JNIEXPORT jboolean JNICALL Java_main_Main_movePiece(JNIEnv *env, jclass obj, jin
     // Normal movement (1 step diagonal)
     if (abs(endX - startX) == 1 && abs(endY - startY) == 1) {
         // Normal pieces can only move forward
-        if ((piece == 1 && endX > startX) || (piece == -1 && endX < startX) || abs(piece) == 2) {  // Forward for normal pieces
+        if ((piece == 1 && endX > startX) || (piece == -1 && endX < startX) || abs(piece) == 2) {
             std::swap(board[startX][startY], board[endX][endY]);
             promoteToKing(endX, endY);
             currentPlayer = (piece == 1 || piece == 2) ? -1 : 1;  // Switch turns
@@ -90,11 +92,11 @@ JNIEXPORT jboolean JNICALL Java_main_Main_movePiece(JNIEnv *env, jclass obj, jin
         int midPiece = board[midX][midY];
 
         // Normal pieces should only capture forward
-        if (piece == 1 && endX > startX && midPiece < 0) {  // Player 1 capturing
+        if (piece == 1 && endX > startX && midPiece < 0) {
             board[midX][midY] = 0;
             std::swap(board[startX][startY], board[endX][endY]);
             promoteToKing(endX, endY);
-        } else if (piece == -1 && endX < startX && midPiece > 0) {  // Player 2 capturing
+        } else if (piece == -1 && endX < startX && midPiece > 0) {
             board[midX][midY] = 0;
             std::swap(board[startX][startY], board[endX][endY]);
             promoteToKing(endX, endY);
@@ -106,14 +108,15 @@ JNIEXPORT jboolean JNICALL Java_main_Main_movePiece(JNIEnv *env, jclass obj, jin
             return JNI_FALSE;  // Invalid capture
         }
 
-        // Allow the same piece to continue jumping if possible
+        // Check if more captures are possible
         if (canCapture(endX, endY)) {
             jumpingPieceX = endX;
             jumpingPieceY = endY;
             return JNI_TRUE;
         }
 
-        currentPlayer = (piece == 1 || piece == 2) ? -1 : 1;  // Switch turns
+        // No more captures possible, switch turn to opponent
+        currentPlayer = (piece == 1 || piece == 2) ? -1 : 1;
         jumpingPieceX = jumpingPieceY = -1;  // Reset jump tracking after final jump
         return JNI_TRUE;
     }
