@@ -7,7 +7,7 @@
 auto isWithinBounds(int, int) -> bool;
 auto promoteToKing(int x, int y) -> void;
 auto canCapture(int, int) -> bool;
-
+auto checkEndgame() -> int;
 
 // 8x8 board for the Checkers game
 std::vector<std::vector<int>> board = {
@@ -26,18 +26,18 @@ int jumpingPieceX = -1;  // Track the piece that is currently jumping
 int jumpingPieceY = -1;
 
 // Helper to check if a position is within the bounds of the board
-bool isWithinBounds(int x, int y) {
+auto isWithinBounds(int x, int y) -> bool {
     return x >= 0 && x < 8 && y >= 0 && y < 8;
 }
 
 // Promote to king if a piece reaches the opposite side of the board
-void promoteToKing(int x, int y) {
+auto promoteToKing(int x, int y) -> void {
     if (board[x][y] == 1 && x == 7) board[x][y] = 2;    // Player 1 to king
     if (board[x][y] == -1 && x == 0) board[x][y] = -2;  // Player 2 to king
 }
 
 // Check if a capture is possible for a specific piece
-bool canCapture(int x, int y) {
+auto canCapture(int x, int y) -> bool {
     int piece = board[x][y];
 
     // Player 1 normal piece (forward captures only)
@@ -63,7 +63,7 @@ bool canCapture(int x, int y) {
     return false;
 }
 
-int checkEndgame() {
+auto checkEndgame() -> int {
     bool player1HasPieces = false;
     bool player2HasPieces = false;
     bool player1CanMoveOrCapture = false;
