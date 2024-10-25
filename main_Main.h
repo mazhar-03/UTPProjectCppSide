@@ -9,14 +9,6 @@ extern "C" {
 #endif
 /*
  * Class:     main_Main
- * Method:    getBoardState
- * Signature: ()[[I
- */
-JNIEXPORT jobjectArray JNICALL Java_main_Main_getBoardState
-        (JNIEnv *, jclass);
-
-/*
- * Class:     main_Main
  * Method:    movePiece
  * Signature: (IIII)Z
  */
