@@ -31,6 +31,14 @@ JNIEXPORT jboolean JNICALL Java_main_Main_movePiece
 JNIEXPORT jint JNICALL Java_main_Main_checkEndgame
         (JNIEnv *, jclass);
 
+/*
+ * Class:     main_Main
+ * Method:    getTileState
+ * Signature: (II)I
+ */
+JNIEXPORT jint JNICALL Java_main_Main_getTileState
+        (JNIEnv *, jclass, jint, jint);
+
 #ifdef __cplusplus
 }
 #endif

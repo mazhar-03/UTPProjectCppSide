@@ -225,3 +225,8 @@ JNIEXPORT jint JNICALL Java_main_Main_checkEndgame(JNIEnv *env, jclass obj) {
     // Return the result of the endgame check
     return checkEndgame();
 }
+
+JNIEXPORT jint JNICALL Java_main_Main_getTileState
+        (JNIEnv *, jclass, jint row, jint col){
+    return board[row][col];
+}
