@@ -13,7 +13,7 @@ extern "C" {
  * Signature: (IIII)Z
  */
 JNIEXPORT jboolean JNICALL Java_main_Main_movePiece
-        (JNIEnv *, jclass, jint, jint, jint, jint);
+  (JNIEnv *, jclass, jint, jint, jint, jint);
 
 /*
  * Class:     main_Main
@@ -21,7 +21,7 @@ JNIEXPORT jboolean JNICALL Java_main_Main_movePiece
  * Signature: ()I
  */
 JNIEXPORT jint JNICALL Java_main_Main_checkEndgame
-        (JNIEnv *, jclass);
+  (JNIEnv *, jclass);
 
 /*
  * Class:     main_Main
@@ -29,7 +29,15 @@ JNIEXPORT jint JNICALL Java_main_Main_checkEndgame
  * Signature: (II)I
  */
 JNIEXPORT jint JNICALL Java_main_Main_getTileState
-        (JNIEnv *, jclass, jint, jint);
+  (JNIEnv *, jclass, jint, jint);
+
+/*
+ * Class:     main_Main
+ * Method:    resetBoard
+ * Signature: ()V
+ */
+JNIEXPORT void JNICALL Java_main_Main_resetBoard
+  (JNIEnv *, jclass);
 
 #ifdef __cplusplus
 }

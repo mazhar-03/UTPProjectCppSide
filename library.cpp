@@ -4,6 +4,7 @@
 #include <algorithm>  // For std::swap
 
 // function declarations
+auto resetBoard() -> void;
 auto isWithinBounds(int, int) -> bool;
 auto promoteToKing(int x, int y) -> void;
 auto canCapture(int, int) -> bool;
@@ -24,6 +25,24 @@ std::vector<std::vector<int>> board = {
 int currentPlayer = 1;  // 1 for Player 1 (white), -1 for Player 2 (black)
 int jumpingPieceX = -1;  // Track the piece that is currently jumping
 int jumpingPieceY = -1;
+
+// helper function for running the test class without any problem.
+// gonna connect with @BeforeEach annotation
+auto resetBoard() -> void {
+    board = {
+            {0, 1, 0, 1, 0, 1, 0, 1},
+            {1, 0, 1, 0, 1, 0, 1, 0},
+            {0, 1, 0, 1, 0, 1, 0, 1},
+            {0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0},
+            {-1, 0, -1, 0, -1, 0, -1, 0},
+            {0, -1, 0, -1, 0, -1, 0, -1},
+            {-1, 0, -1, 0, -1, 0, -1, 0}
+    };
+    currentPlayer = 1;
+    jumpingPieceX = -1;
+    jumpingPieceY = -1;
+}
 
 // Helper function to check if a position is within the bounds of the board
 auto isWithinBounds(int x, int y) -> bool {
@@ -195,4 +214,9 @@ JNIEXPORT jint JNICALL Java_main_Main_getTileState(JNIEnv *env, jclass obj, jint
 // JNI method to check endgame status
 JNIEXPORT jint JNICALL Java_main_Main_checkEndgame(JNIEnv *env, jclass obj) {
     return checkEndgame();
+}
+
+JNIEXPORT void JNICALL Java_main_Main_resetBoard
+        (JNIEnv *, jclass){
+    resetBoard();
 }
